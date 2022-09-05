@@ -19,7 +19,10 @@ Console.Clear();
 
 int[,] array = CreateTowDimensionalArray();
 int[,] newArray = CreateNewTowDimensionalArray(array);
-PrintTowDimensionalArray(array, newArray);
+string colorGreen = "Green";
+string colorRed = "Red";
+PrintTowDimensionalArray(array, colorGreen);
+PrintTowDimensionalArray(newArray, colorRed);
 
 int[,] CreateTowDimensionalArray()
 {
@@ -37,49 +40,11 @@ int[,] CreateTowDimensionalArray()
 
 int[,] CreateNewTowDimensionalArray(int[,] array)
 {
-    int[,] temp = new int[array.GetLength(0), array.GetLength(1)];
     int min = array[0, 0];
-    //min = GetMinElement(min);
     int[] position = GetPositionMinElement(min);
 
-    temp = CreateTemp(array);
-    temp = DeleteRows(temp, position);
-    temp = DeleteColumns(temp, position);
-
-    int[,] newArray = new int[temp.GetLength(0) -1, temp.GetLength(1) -1];
-    newArray = GetNewArray(temp);
-
-    // while (GetMinElement(newArray, min) == min)
-    // {
-    //     position = GetPositionMinElement(newArray, min);
-    //     temp = DeleteRows(temp, position);
-    //     temp = DeleteColumns(temp, position);
-    //     newArray = new int[newArray.GetLength(0) -1, newArray.GetLength(1) -1];
-    //     newArray = GetNewArray(temp);
-    // }
-    // if ((GetMinElement(min)) == min)
-    // {
-    //     temp = DeleteRows(temp, position);
-    //     temp= DeleteColumns(temp, position);
-    //     newArray = new int[newArray.GetLength(0) -1, newArray.GetLength(1) -1];
-    //     newArray = GetNewArray(temp);
-    // }
-    
-    // int GetMinElement(int[,]array, int min)
-    // {
-    //     for (int i = 0; i < array.GetLength(0); i++)
-    //     {
-    //         for (int j = 0; j < array.GetLength(1); j++)
-    //         {
-    //             if (array[i, j] < min) 
-    //             {
-    //                 min = array[i, j];
-    //             }
-    //         }
-    //     }
-    //     return min;
-    // }
-
+    int[,] temp = DeleteRowsColumns(array, position);
+   
     int[] GetPositionMinElement(int min)
     {
         int[]  position  = new int[2];
@@ -99,75 +64,35 @@ int[,] CreateNewTowDimensionalArray(int[,] array)
         return position;
     }
 
-    // Создаем временный массив temp
-    int[,] CreateTemp(int[,] array)
+    int[,] DeleteRowsColumns(int[,] array, int[] position)
     {
+        int[,] temp = new int[array.GetLength(0) -1, array.GetLength(1) -1];
+        int indexI = 0;
+        int indexJ = 0;
+
         for (int i = 0; i < array.GetLength(0); i++)
         {
-            for (int j = 0; j < array.GetLength(1); j++)
+            if (i == position[0]) continue;
+            else
             {
-                temp[i, j] = array[i, j];
-            }
-        }
-        return temp;
-    }
-
-    // Обрезаем строку и колонку записываем результат в новый массив
-    int[,] GetNewArray(int[,] temp)
-    {
-        for (int i = 0; i < newArray.GetLength(0); i++)
-        {
-            for (int j = 0; j < newArray.GetLength(1); j++)
-            {
-                newArray[i, j] = temp[i, j];
-            }
-        }
-        return newArray;
-    }
-
-    // Удаляем строку строку с min элементом из массива temp 
-    int[,] DeleteRows(int[,] temp, int[] position)
-    {
-        int index = 0;
-
-        for (int i = 0; i < temp.GetLength(0); i++)
-        {
-            if (i != position[0])
-            {
-                for (int j = 0; j < temp.GetLength(1); j++)
+                for (int j = 0; j < array.GetLength(1); j++)
                 {
-                    temp[index, j] = temp[i, j];
+                    if (j == position[1]) continue;
+                    temp[indexI, indexJ] = array[i, j];
+                    indexJ++;
                 }
-                index++;
+                indexI++;
+                indexJ = 0;
             }
         }
         return temp;
     }
-
-    // Удаляем колонку с min элементом из массива temp
-    int[,] DeleteColumns(int[,] temp, int[] position)
-    {
-        int index = 0;
-
-        for (int j = 0; j < temp.GetLength(1); j++)
-        {
-            if (j != position[1])
-            {
-                for (int i = 0; i < temp.GetLength(0); i++)
-                {
-                    temp[i, index] = temp[i, j];
-                }
-                index++;
-            }
-        }
-        return temp;
-    }
-    return newArray; 
+    return temp; 
 }
 
-void PrintTowDimensionalArray(int[,] array, int[,] newArray)
+void PrintTowDimensionalArray(int[,] array, string colorName = "Green")
 {
-    Console.ForegroundColor = ConsoleColor.Green;
+    Console.ForegroundColor = (ConsoleColor)Enum.Parse(typeof(ConsoleColor), colorName);
     Console.Write("[ ");
     
     for (int i = 0; i < array.GetLength(0); i++)
@@ -182,19 +107,4 @@ void PrintTowDimensionalArray(int[,] array, int[,] newArray)
     Console.Write("]");
     Console.ResetColor();
     Console.WriteLine();
-
-    Console.ForegroundColor = ConsoleColor.Blue;
-    Console.Write("[ ");
-    
-    for (int i = 0; i < newArray.GetLength(0); i++)
-    {
-        for (int j = 0; j < newArray.GetLength(1); j++)
-        {
-            Console.Write($"\t{newArray[i, j]}");
-        }
-        Console.WriteLine();
-    }
-    
-    Console.WriteLine("]");
-    Console.ResetColor(); 
 }
